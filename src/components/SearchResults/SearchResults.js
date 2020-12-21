@@ -37,7 +37,7 @@ export default function SearchResults() {
   return (
     <div>
       {results.map(result => (
-        <div className="result">
+        <div className="result" key={result.pageid}>
           <h2>{result.title}</h2>
           <p>{ReactHtmlParser(result.snippet)}...</p>
         </div>
