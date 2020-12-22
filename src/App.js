@@ -5,49 +5,55 @@ import SearchResults from './components/SearchResults';
 import './App.css';
 
 export default function App() {
-  const [newSearch, setNewSearch] = useState({});
+  const [search, setSearch] = useState({});
   const [results, setResults] = useState([]);
 
   const handleChange = ({target}) => {
     const { name, value } = target;
-    setNewSearch((prev) => ({ ...prev, [name]: value, id: Date.now }));
+    setSearch((prevSearch) => ({
+      ...prevSearch,
+      [name]: value,
+      id: Date.now
+    }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!newSearch.title) return;
+    if (!search.title) return;
     
-    var url = "https://en.wikipedia.org/w/api.php";
+    let url = "https://en.wikipedia.org/w/api.php";
   
-    var params = {
+    let params = {
       action: "query",
       list: "search",
-      srsearch: newSearch.title,
+      srsearch: search.title,
       format: "json"
     };
   
-    url = url + "?origin=*";
-    Object.keys(params).forEach(function(key){url += "&" + key + "=" + params[key];});
+    url += "?origin=*";
+    Object.keys(params).forEach(key => {
+      url += "&" + key + "=" + params[key];
+    });
   
     fetch(url)
-    .then(function(response) {
+    .then(response => {
       return response.json();
     })
-    .then(function(response) {
+    .then(response => {
       setResults(response.query.search);
     })
-    .catch(function(error) {
+    .catch(error => {
       console.log(error);
     });
     
-    setNewSearch({});
+    setSearch({});
   };
 
   return (
     <div className="App">
       <br></br>
       <InputField
-        newSearch={newSearch}
+        newSearch={search}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
