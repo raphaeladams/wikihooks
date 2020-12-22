@@ -6,7 +6,7 @@ import './App.css';
 
 export default function App() {
   const [search, setSearch] = useState({});
-  const [results, setResults] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
   const handleChange = ({target}) => {
     const { name, value } = target;
@@ -21,7 +21,7 @@ export default function App() {
     event.preventDefault();
     if (!search.title) return;
     
-    let url = "https://en.wikipedia.org/w/api.php";
+    let urlQuery = "https://en.wikipedia.org/w/api.php";
   
     let params = {
       action: "query",
@@ -30,17 +30,24 @@ export default function App() {
       format: "json"
     };
   
-    url += "?origin=*";
+    urlQuery += "?origin=*";
     Object.keys(params).forEach(key => {
-      url += "&" + key + "=" + params[key];
+      urlQuery += "&" + key + "=" + params[key];
     });
   
-    fetch(url)
+    fetch(urlQuery)
     .then(response => {
       return response.json();
     })
     .then(response => {
-      setResults(response.query.search);
+      let urlBrowse = "https://en.wikipedia.org/wiki/";
+      let results = response.query.search;
+
+      results.forEach(result => {
+        result.wikiLink = urlBrowse + result.title.replace(/\s/g, "_");
+      });
+      
+      setSearchResults(results);
     })
     .catch(error => {
       console.log(error);
@@ -59,7 +66,9 @@ export default function App() {
       />
       <br></br>
       <br></br>
-      <SearchResults results={results} />
+      <SearchResults
+        results={searchResults}
+      />
     </div>
   );
 }
